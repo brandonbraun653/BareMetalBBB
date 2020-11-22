@@ -1,0 +1,28 @@
+
+startup.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	e10f0000 	mrs	r0, CPSR
+   4:	e3c0001f 	bic	r0, r0, #31
+   8:	e3800013 	orr	r0, r0, #19
+   c:	e38000c0 	orr	r0, r0, #192	; 0xc0
+  10:	e129f000 	msr	CPSR_fc, r0
+  14:	e59f0028 	ldr	r0, [pc, #40]	; 0x44
+  18:	e59f1028 	ldr	r1, [pc, #40]	; 0x48
+  1c:	e5801000 	str	r1, [r0]
+  20:	e59f0024 	ldr	r0, [pc, #36]	; 0x4c
+  24:	e5901000 	ldr	r1, [r0]
+  28:	e3c11602 	bic	r1, r1, #2097152	; 0x200000
+  2c:	e5801000 	str	r1, [r0]
+  30:	e59f0018 	ldr	r0, [pc, #24]	; 0x50
+  34:	e5901000 	ldr	r1, [r0]
+  38:	e3811602 	orr	r1, r1, #2097152	; 0x200000
+  3c:	e5801000 	str	r1, [r0]
+  40:	eafffffe 	b	0x40
+  44:	44e000ac 	strbtmi	r0, [r0], #172	; 0xac
+  48:	00040002 	andeq	r0, r4, r2
+  4c:	4804c134 	stmdami	r4, {r2, r4, r5, r8, lr, pc}
+  50:	4804c13c 	stmdami	r4, {r2, r3, r4, r5, r8, lr, pc}
