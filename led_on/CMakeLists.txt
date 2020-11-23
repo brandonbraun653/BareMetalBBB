@@ -1,24 +1,24 @@
 # -----------------------------------------------------------------------------
-# Test Suite: HLD GPIO
+# Builds the led_on example
+#
+# Configure Command:
+#   cmake -DTOOLCHAIN=arm-linux-gnueabihf -DCMAKE_BUILD_TYPE=Debug --configure ../
+#
+# Build Command:
+#   cmake --build . --target led_on
 # -----------------------------------------------------------------------------
-add_executable(led_on
-  startup.s
-)
+project(led_on)
 
-target_include_directories(led_on PRIVATE "." )
 
-target_link_libraries(led_on PRIVATE
+add_executable(${PROJECT_NAME}.elf startup.s)
+target_link_options(${PROJECT_NAME}.elf PRIVATE "-T${CMAKE_SOURCE_DIR}/led_on/ram.ld")
 
-  # Target Build Properties
-  # prj_device_target
-  # prj_build_target
-)
-target_include_directories(led_on PRIVATE ${PROJECT_ROOT})
-target_link_options(led_on PRIVATE "-T${CMAKE_SOURCE_DIR}/led_on/ram.ld")
+add_custom_target(${PROJECT_NAME}.bin DEPENDS ${PROJECT_NAME}.elf)
+add_custom_command(TARGET ${PROJECT_NAME}.bin
+  COMMAND ${CMAKE_OBJCOPY} ARGS -O binary ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.elf ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.bin)
 
-# add_custom_command(TARGET led_on POST_BUILD
-#     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:led_on> ${LAST_BUILT_VERSION_DIRECTORY}/test_image
-# )
+add_custom_target(${PROJECT_NAME}.lst DEPENDS ${PROJECT_NAME}.bin)
+add_custom_command(TARGET ${PROJECT_NAME}.lst
+  COMMAND ${CMAKE_OBJDUMP} ARGS -D -b binary -marm ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.bin > ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.lst)
 
-# Last known working configuration command:
-# cmake -DTOOLCHAIN=arm-linux-gnueabihf -DCMAKE_BUILD_TYPE=Debug --configure ../
+add_custom_target(${PROJECT_NAME} DEPENDS ${PROJECT_NAME}.lst)
