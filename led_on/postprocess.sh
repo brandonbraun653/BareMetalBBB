@@ -1,0 +1,1 @@
+arm-linux-gnueabihf-objdump -D -b binary -marm ../build/artifacts/bin/led_on > led_on.lst

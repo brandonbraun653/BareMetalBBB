@@ -39,6 +39,7 @@ _start:
   orr r1, r1, #(1<<21)                @ Set bit 21 to turn on USR0
   str r1, [r0]                        @ Write new value back to DATAOUT
 
+
 /* Idle away to infinity */
 .loop:
   b .loop
