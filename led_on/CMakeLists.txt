@@ -16,6 +16,7 @@ project(led_on)
 #------------------------------------------------
 add_executable(${PROJECT_NAME}.elf startup.s)
 target_link_options(${PROJECT_NAME}.elf PRIVATE "-T${CMAKE_SOURCE_DIR}/led_on/ram.ld")
+target_link_options(${PROJECT_NAME}.elf PRIVATE "-Map=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.map")
 
 # Create led_on.bin & led_on.lst
 add_elf2bin_dependency(${PROJECT_NAME})
