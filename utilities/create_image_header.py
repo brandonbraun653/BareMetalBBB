@@ -60,21 +60,28 @@ def create_ti_binary(original_file: Path, load_address: int):
     img_size = get_binary_size(original_file)
 
     # --------------------------------------------------------
-    # Dump the header information and original binary to file
+    # Dump the header information and original binary to file.
+    # This must be in big endian format per TRM 26.1.8.6.3
     # --------------------------------------------------------
     with new_path.open(mode='wb') as newbin:
-        bin_image = original_file.read_bytes()
         size_bytes = img_size.to_bytes(4, byteorder='big')
         load_bytes = load_address.to_bytes(4, byteorder='big')
-
         newbin.write(size_bytes)
         newbin.write(load_bytes)
-        newbin.write(bin_image)
 
+        # Read the little endian formatted binary and convert to big endian
+        with original_file.open('rb') as fp:
+            idx = 0
+            while idx < img_size:
+                word = fp.read(4)
+                newbin.write(word[::-1])
+                idx += 4
+
+        # Fill the rest of the flash chip with zeros
         my_flash_chip_sz = 1048576
         newbin_data_size = 8 + img_size
         flash_size = my_flash_chip_sz - newbin_data_size
-        pad = bytes(flash_size)
+        pad = bytes([0xff]*flash_size)
         newbin.write(pad)
 
     # --------------------------------------------------------
@@ -82,7 +89,7 @@ def create_ti_binary(original_file: Path, load_address: int):
     # --------------------------------------------------------
     layout_file = Path(base_folder, 'rom.layout')
     with layout_file.open(mode='w') as layout:
-        layout.write('0:{} normal'.format(hex(newbin_data_size)))
+        layout.write('0x00:{} normal'.format(hex(newbin_data_size)))
 
 
 if __name__ == '__main__':

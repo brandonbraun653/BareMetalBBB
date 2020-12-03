@@ -14,3 +14,8 @@ Bonus Things:
 
 ## Notes As I Go
 I learned that ".equ" statements are effectively creating constants, just like "#define" in C.
+
+
+
+## Program the BIN
+flashrom -p buspirate_spi:dev=/dev/ttyUSB1 -c AT25SF081 --layout rom.layout --image normal -w led_on_ti_boot_image.bin
